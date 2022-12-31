@@ -1,0 +1,71 @@
+{% extends 'base_index.html' %}
+
+{% block title %} NAMES {% endblock %}
+
+
+{% block main %}
+<div class="container">
+
+<!--This loops through the flash message -->
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    {% if name %}
+        <h1>Hello {{name}} </h1> 
+
+    {% else %}
+        <h1>User List </h1> 
+        <br/>
+        <div class="shadow p-3 mb-5 bg-body rounded">
+            <form method="post">
+                {{form.hidden_tag()}} <!--This creates our csrf token -->
+                {{form.name.label(class="form-label")}}
+                {{form.name(class="form-control")}}
+                {{form.email.label(class="form-label")}}
+                {{form.email(class="form-control")}}
+                <br/>
+                {{form.submit(class="btn btn-primary")}} 
+            </form>
+        </div>
+    </div>
+
+    {% endif %}
+
+    </br>
+
+    <div class="container">
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                </tr>
+            </thead>
+        {% for our_user in our_users %}    
+            <tbody>
+                <tr>
+                <th scope="row">{{our_user.id}}</th>
+                <td>{{our_user.name}}</td>
+                <td>{{our_user.email}}</td>
+                </tr>
+            </tbody>     
+                    
+        {% endfor %}
+        </table>
+    </div>   
+                
+        
+                
+                
+                
+            
+    
+</div>
+ 
+
+{% endblock %}
