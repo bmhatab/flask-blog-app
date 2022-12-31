@@ -7,7 +7,7 @@ app.debug = True
 #create a route decorator
 @app.route('/')
 def index():
-    return "<h1>hello12</h1>"
+    return render_template("index.html",name="New")
 
 @app.route('/user/<name>')
 def user(name):
