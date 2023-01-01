@@ -37,6 +37,7 @@
 
     </br>
 
+     
     <div class="container">
         <table class="table table-bordered table-striped table-hover">
             <thead>
@@ -46,19 +47,22 @@
                 <th scope="col">Email</th>
                 </tr>
             </thead>
-        {% for our_user in our_users %}    
+          
             <tbody>
+        {% for our_user in our_users %} 
                 <tr>
                 <th scope="row">{{our_user.id}}</th>
-                <td>{{our_user.name}}</td>
+                <td><a href="{{url_for('update', id=our_user.id)}}">{{our_user.name}}</a></td>
                 <td>{{our_user.email}}</td>
                 </tr>
+        {% endfor %}
             </tbody>     
                     
-        {% endfor %}
+       
         </table>
     </div>   
-                
+    
+        
         
                 
                 

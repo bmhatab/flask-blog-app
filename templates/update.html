@@ -1,0 +1,76 @@
+{% extends 'base_index.html' %}
+
+{% block title %} NAMES {% endblock %}
+
+
+{% block main %}
+<div class="container">
+
+<!--This loops through the flash message -->
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    {% if name %}
+        <h1>Update User</h1> 
+          
+            <div class="container">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead> 
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        </tr>
+                    </thead>
+                
+                    <tbody>
+    {% for our_user in our_users %} 
+                        <tr>
+                        <th scope="row">{{our_user.id}}</th>
+                        <td><a href="{{url_for('update', id=our_user.id)}}">{{our_user.name}}</a></td>
+                        <td>{{our_user.email}}</td>
+                        </tr>
+    {% endfor %}                    
+                    </tbody>     
+                            
+            
+                </table>
+            </div>   
+        
+
+    {% else %}
+        <h1>User List </h1> 
+        <br/>
+        <div class="shadow p-3 mb-5 bg-body rounded">
+            <form action="/update/{{name_to_update.id}}" method="post">
+                {{form.hidden_tag()}} <!--This creates our csrf token -->
+                {{form.name.label(class="form-label")}}
+                {{form.name(class="form-control",value=name_to_update.name)}}
+                {{form.email.label(class="form-label")}}
+                {{form.email(class="form-control",value=name_to_update.email)}}
+                <br/>
+                {{form.submit(class="btn btn-primary")}} 
+            </form>
+        </div>
+    </div>
+
+    {% endif %}
+
+    </br>
+
+    
+                
+        
+                
+                
+                
+            
+    
+</div>
+ 
+
+{% endblock %}
