@@ -1,6 +1,6 @@
 from flask import Flask, render_template,flash,request
 from flask_wtf import FlaskForm
-from wtforms import StringField,SubmitField
+from wtforms import Form,StringField,SubmitField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -49,6 +49,11 @@ class UserForm(FlaskForm):
     email = StringField("Email : ", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
+class UpdateForm(FlaskForm):
+    name = StringField("Name : ", validators=[DataRequired()])
+    email = StringField("Email : ", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
 
 
 #----------------------------------------------------------------------------------------------------
@@ -79,7 +84,6 @@ def name():
 def add_user():
     name = None
     form = UserForm()
-
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
@@ -97,22 +101,21 @@ def add_user():
 #update database
 @app.route('/update/<int:id>', methods =['GET','POST'])
 def update(id):
-    form = UserForm()
-    name_to_update = Users.query.get_or_404(id)
-    if request.method == "POST":
-        name_to_update = request.form['name']
-        name_to_update = request.form['email']
-        try:
-            db.session.commit()
-            flash("User updated sucessfully")
-            return render_template("update.html",form=form,name_to_update=name_to_update)
-            
-        except:
-            flash("Error! Problem with entry")
-            return render_template("update.html",form=form,name_to_update=name_to_update)
-
+    user = db.session.query(Users).get(id)
+    form = UpdateForm(request.form)
+    if request.method == "POST" and form.validate():
+        user.name = form.name.data
+        user.email = form.email.data
+        db.session.commit()
+        flash("User Added Sucessfully")
+        return render_template("update.html",form=form,user=user)
+    
     else:
-         return render_template("update.html",form=form,name_to_update=name_to_update)
+        return render_template("update.html",form=form,user=user)
+    
+  
+    #user = db.get_or_404(Users, id)
+
 #create error handler for pages
 #----------------------------------------------------------------------------------------------------
 #Invalid URL

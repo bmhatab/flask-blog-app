@@ -46,12 +46,12 @@
         <h1>User List </h1> 
         <br/>
         <div class="shadow p-3 mb-5 bg-body rounded">
-            <form action="/update/{{name_to_update.id}}" method="post">
+            <form action="/update/{{user.id}}" method="post">
                 {{form.hidden_tag()}} <!--This creates our csrf token -->
                 {{form.name.label(class="form-label")}}
-                {{form.name(class="form-control",value=name_to_update.name)}}
+                {{form.name(class="form-control",value=user.name)}}
                 {{form.email.label(class="form-label")}}
-                {{form.email(class="form-control",value=name_to_update.email)}}
+                {{form.email(class="form-control",value=user.email)}}
                 <br/>
                 {{form.submit(class="btn btn-primary")}} 
             </form>
