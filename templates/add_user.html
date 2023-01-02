@@ -53,7 +53,7 @@
                 <tr>
                 <th scope="row">{{our_user.id}}</th>
                 <td><a href="{{url_for('update', id=our_user.id)}}">{{our_user.name}}</a></td>
-                <td>{{our_user.email}}</td>
+                <td>{{our_user.email}} - <a href="{{url_for('delete', id=our_user.id)}}">Delete</a></td>
                 </tr>
         {% endfor %}
             </tbody>     

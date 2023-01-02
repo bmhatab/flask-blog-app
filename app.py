@@ -4,6 +4,7 @@ from wtforms import Form,StringField,SubmitField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_migrate import Migrate
 
 #create an instance of flask
 app = Flask(__name__)
@@ -14,6 +15,10 @@ app.config['SECRET_KEY']="secret"   #private key to be hidden
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 # Initialize database
 db = SQLAlchemy(app)
+# Using flask-migrate Migrate
+migrate = Migrate(app=app,db=db)
+#turn it on in terminal with 
+# db.init_app(app=app)
 
 # create database model
 class Users(db.Model):
@@ -35,7 +40,7 @@ class Users(db.Model):
 #>> exit()
 #
 
-
+# Also note pip install Flask-Migrate to migrate db
 
 class NamerForm(FlaskForm):
     name = StringField("What is your name?", validators=[DataRequired()])
@@ -113,7 +118,22 @@ def update(id):
     
     else:
         return render_template("update.html",form=form,user=user)
+
+
+@app.route('/delete/<int:id>', methods =['GET','POST'])
+def delete(id):
+    user = db.session.query(Users).get(id)
+    form = UpdateForm(request.form)
+    if request.method == "GET":
+        db.session.delete(user)
+        db.session.commit()
+        flash("User Deleted Sucessfully")
+        return render_template("add_user.html",form=form,user=user)
     
+    else:
+        return render_template("add_user.html",form=form,user=user)
+
+
   
     #user = db.get_or_404(Users, id)
 
