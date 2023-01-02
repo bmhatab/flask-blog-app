@@ -52,6 +52,11 @@
                 {{form.name(class="form-control",value=user.name)}}
                 {{form.email.label(class="form-label")}}
                 {{form.email(class="form-control",value=user.email)}}
+                {{form.password_hash.label(class="form-label")}}
+                {{form.password_hash(class="form-control")}}
+                {{form.password_hash_v.label(class="form-label")}}
+                {{form.password_hash_v(class="form-control")}}
+                <br/>
                 <br/>
                 {{form.submit(class="btn btn-primary")}} 
             </form>
