@@ -26,7 +26,7 @@ class Users(db.Model):
     def __repr__(self):
         return '<Name %r>' % self.name 
 
-#Instance a new database table once from python interpreter 
+#Instance a new database table "once" from python interpreter 
 #Type "python" in terminal
 #>> from app import db,app
 #>> db.init_app(app=app)
