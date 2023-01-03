@@ -181,6 +181,16 @@ def add_post():
         return render_template("add_post.html",form=form,post=post,content=content,author=author,slug=slug)
         
    
+@app.route('/posts')
+def posts():
+    posts = Posts.query.order_by(Posts.date_posted)
+
+    return render_template("posts.html",posts=posts)
+
+@app.route('/post/<int:id>')
+def post(id):
+    post = Posts.query.get_or_404(id)
+    return render_template('post.html', post=post)
 
 
 @app.route('/user/add', methods =['GET','POST'])

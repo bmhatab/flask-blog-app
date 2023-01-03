@@ -1,0 +1,40 @@
+{% extends 'base_index.html' %}
+
+{% block title %} NAMES {% endblock %}
+
+
+{% block main %}
+<div class="container">
+
+    <!--This loops through the flash message -->
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+
+<h1>Blog Posts...</h1>
+
+    {% for post in posts %}
+    <div class="shadow p-3 mb-5 bg-body rounded">
+        <div class="card text-center">
+            <div class="card-header">
+                Blog Posts...
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{post.title}}</h5>
+              <hr>
+              <p class="card-text">{{post.author}}</br>{{post.slug}}</br>{{post.content}}</p>
+              <a class="btn btn-outline-secondary" href="{{url_for('post', id=post.id)}}">View Post</a></br>
+            </div>
+            <div class="card-footer text-muted">
+                {{post.date_posted}}
+            </div>
+          </div>
+    </div>
+    {% endfor %}
+
+
+{% endblock %}
