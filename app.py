@@ -6,8 +6,10 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash,check_password_hash
+from wtforms.widgets import TextArea
 
 
+#----------------------------------------------------------------------------------------------------
 #create an instance of flask
 app = Flask(__name__)
 app.debug = True
@@ -21,6 +23,8 @@ db = SQLAlchemy(app)
 migrate = Migrate(app=app,db=db)
 #turn it on in terminal with 
 # db.init_app(app=app)
+#----------------------------------------------------------------------------------------------------
+
 
 # create database model
 class Users(db.Model):
@@ -54,18 +58,26 @@ class Users(db.Model):
 #>> with app.app_context():
 #....   db.create_all()  
 #>> exit()
-#
 
-# Also note pip install Flask-Migrate to migrate db
+# Creating a Blog post Model
+class Posts(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    author = db.Column(db.String(255))
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    slug = db.Column(db.String(255)) # An alias for the url
 
+#----------------------------------------------------------------------------------------------------
 class NamerForm(FlaskForm):
     name = StringField("What is your name?", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
+class LoginForm(FlaskForm):
+    email = StringField("Email", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Submit")
 
-
-#create a Form Class
-# Creating a class for the user form
 class UserForm(FlaskForm):
     name = StringField("Name : ", validators=[DataRequired()])
     email = StringField("Email : ", validators=[DataRequired()])
@@ -80,6 +92,13 @@ class UpdateForm(FlaskForm):
     password_hash = PasswordField("Password : ", validators=[DataRequired(),EqualTo('password_hash_v',message="Passwords must match!")])
     password_hash_v = PasswordField("Confirm Password : ", validators=[DataRequired()])
     
+class PostForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    content = StringField("Content", validators=[DataRequired()], widget=TextArea())
+    author = StringField("Author", validators=[DataRequired()])
+    slug = StringField("Slug", validators=[DataRequired()])
+    submit = SubmitField()
+
 
 
 
@@ -105,6 +124,63 @@ def name():
         flash("Form submitted successfully!")
         
     return render_template("name.html",name=name,form=form)
+
+@app.route('/login',methods=['GET','POST']) #post method needed for page containing forms
+def login():
+    email = None
+    password = None
+    pw_to_check = None
+    passed = None
+    form = LoginForm()
+    #validating form
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        form.email.data =''
+        form.password.data =''
+        # Query for user details
+        pw_to_check = Users.query.filter_by(email=email)
+        # Compare password with encrypted string in db
+        passed = check_password_hash(pw_to_check,password)
+
+
+        flash("Form submitted successfully!")
+        return render_template("login.html",email=email,
+            password = password,
+            pw_to_check = pw_to_check,
+            passed = passed,
+            form = form)
+    
+    else:
+        flash("Error, try again")
+        return render_template("login.html",email=email,password=password,form=form)
+
+@app.route('/add-post', methods = ['POST','GET'])
+def add_post():
+    post = None
+    content = None
+    author = None
+    slug = None
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Posts(title=form.title.data,
+        content = form.content.data,
+        author = form.author.data,
+        slug = form.slug.data,
+        )
+        form.title.data = ''
+        form.content.data = ''
+        form.author.data = ''
+        form.slug.data = ''
+# Add Log post to database 
+        db.session.add(post)
+        db.session.commit()
+        flash("Blog Post Submitted Sucessfully")
+        return render_template("add_post.html",form=form,post=post,content=content,author=author,slug=slug)
+    else:
+        return render_template("add_post.html",form=form,post=post,content=content,author=author,slug=slug)
+        
+   
 
 
 @app.route('/user/add', methods =['GET','POST'])

@@ -17,7 +17,7 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-              <a class="nav-link active" aria-current="page" href="#">Profile</a>
+              <a class="nav-link active" aria-current="page" href="{{url_for('add_post')}}">Add post</a>
               <a class="nav-link" href="{{url_for('name')}}">Name</a>
               <a class="nav-link" href="{{url_for('add_user')}}">Add User</a>
             </div>
@@ -25,8 +25,12 @@
         </div>
         <div class="container-fluid">
             <form class="container-fluid justify-content-start">
+              <a href="#">
                 <button class="btn btn-outline-success me-2" type="button">Sign Up</button>
+              </a>
+              <a href="{{url_for('login')}}">
                 <button class="btn btn-sm btn-outline-secondary" type="button">Login</button>
+              </a>
               </form>
         </div>
       </nav>

@@ -1,0 +1,50 @@
+{% extends 'base_index.html' %}
+
+{% block title %} Add Post {% endblock %}
+
+
+{% block main %}
+<div class="container">
+
+<!--This loops through the flash message -->
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+        <h1>Add Post </h1> 
+        <br/>
+        <div class="shadow p-3 mb-5 bg-body rounded">
+            <form method="post">
+                {{form.hidden_tag()}} <!--This creates our csrf token -->
+                {{form.title.label(class="form-label")}}
+                {{form.title(class="form-control")}}
+                {{form.author.label(class="form-label")}}
+                {{form.author(class="form-control")}}
+                {{form.slug.label(class="form-label")}}
+                {{form.slug(class="form-control")}}
+                {{form.content.label(class="form-label")}}
+                {{form.content(class="form-control", rows = "5")}}
+                <br/>
+                {{form.submit(class="btn btn-primary")}} 
+            </form>
+        </div>
+    </div>
+
+   
+
+
+    
+    
+            
+            
+            
+        
+
+</div>
+
+
+
+{% endblock %}
