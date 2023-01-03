@@ -170,6 +170,7 @@ def logout():
 
 
 @app.route('/add-post', methods = ['POST','GET'])
+@login_required
 def add_post():
     post = None
     content = None
@@ -196,17 +197,20 @@ def add_post():
         
    
 @app.route('/posts')
+@login_required
 def posts():
     posts = Posts.query.order_by(Posts.date_posted)
     return render_template("posts.html",posts=posts)
 
 @app.route('/post/<int:id>')
+@login_required
 def post(id):
     post = Posts.query.get_or_404(id)
     return render_template('post.html', post=post)
 
 
 @app.route('/post/delete/<int:id>')
+@login_required
 def delete_post(id):
     post_to_delete = Posts.query.get_or_404(id)
     try:
@@ -225,6 +229,7 @@ def delete_post(id):
 
 
 @app.route('/post/edit/<int:id>', methods = ["GET","POST"])
+@login_required
 def edit_post(id):
     post = Posts.query.get_or_404(id)
     form = PostForm()
@@ -247,6 +252,7 @@ def edit_post(id):
 
 
 @app.route('/user/add', methods =['GET','POST'])
+@login_required
 def add_user():
     
     name = None
@@ -270,6 +276,7 @@ def add_user():
 
 #update database
 @app.route('/update/<int:id>', methods =['GET','POST'])
+@login_required
 def update(id):
     user = db.session.query(Users).get(id)
     form = UpdateForm(request.form)
@@ -286,6 +293,7 @@ def update(id):
 
 
 @app.route('/delete/<int:id>', methods =['GET','POST'])
+@login_required
 def delete(id):
     user = db.session.query(Users).get(id)
     form = UpdateForm(request.form)
