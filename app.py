@@ -163,9 +163,9 @@ def dashboard():
 @app.route('/logout', methods=["GET","POST"])
 @login_required
 def logout():
-    login_user()
+    logout_user()
     flash("You are logged out!")
-    return render_template(url_for('login'))
+    return render_template("index.html")
 
 
 
