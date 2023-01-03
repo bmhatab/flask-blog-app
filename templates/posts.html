@@ -27,7 +27,8 @@
               <h5 class="card-title">{{post.title}}</h5>
               <hr>
               <p class="card-text">{{post.author}}</br>{{post.slug}}</br>{{post.content}}</p>
-              <a class="btn btn-outline-secondary" href="{{url_for('post', id=post.id)}}">View Post</a></br>
+              <a class="btn btn-outline-secondary" href="{{url_for('post', id=post.id)}}">View Post</a>
+              <a class="btn btn-outline-secondary" href="{{url_for('edit_post', id=post.id)}}">Edit Post</a>
             </div>
             <div class="card-footer text-muted">
                 {{post.date_posted}}
