@@ -7,6 +7,7 @@ from datetime import datetime
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash,check_password_hash
 from wtforms.widgets import TextArea
+from flask_login import UserMixin,login_user,LoginManager,login_required,logout_user
 
 
 #----------------------------------------------------------------------------------------------------
@@ -25,9 +26,17 @@ migrate = Migrate(app=app,db=db)
 # db.init_app(app=app)
 #----------------------------------------------------------------------------------------------------
 
+#Login components
+login_manager = LoginManager()
+login_manager.init_app(app=app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
 
 # create database model
-class Users(db.Model):
+class Users(db.Model,UserMixin):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(200),nullable=False)
     email = db.Column(db.String(120),nullable=False, unique=True)
@@ -127,33 +136,38 @@ def name():
 
 @app.route('/login',methods=['GET','POST']) #post method needed for page containing forms
 def login():
-    email = None
-    password = None
-    pw_to_check = None
-    passed = None
     form = LoginForm()
     #validating form
     if form.validate_on_submit():
-        email = form.email.data
-        password = form.password.data
-        form.email.data =''
-        form.password.data =''
-        # Query for user details
-        pw_to_check = Users.query.filter_by(email=email)
-        # Compare password with encrypted string in db
-        passed = check_password_hash(pw_to_check,password)
-
-
-        flash("Form submitted successfully!")
-        return render_template("login.html",email=email,
-            password = password,
-            pw_to_check = pw_to_check,
-            passed = passed,
-            form = form)
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user:
+            # checking the hash
+            if check_password_hash(user.password_hash,form.password.data):
+                login_user(user)
+                flash("Login Successful!")
+                return redirect(url_for('dashboard'))
+                
+            else:
+                flash("Wrong password -- Try again")
+        else:
+            flash("That user doesn't exist -- Try again")
     
     else:
-        flash("Error, try again")
-        return render_template("login.html",email=email,password=password,form=form)
+        return render_template("login.html",form=form)
+
+@app.route('/dashboard', methods=["GET","POST"])
+@login_required
+def dashboard():
+    return render_template("dashboard.html")
+
+@app.route('/logout', methods=["GET","POST"])
+@login_required
+def logout():
+    login_user()
+    flash("You are logged out!")
+    return render_template(url_for('login'))
+
+
 
 @app.route('/add-post', methods = ['POST','GET'])
 def add_post():

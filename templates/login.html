@@ -1,10 +1,11 @@
 {% extends 'base_index.html' %}
 
-{% block title %} NAMES {% endblock %}
+{% block title %} Login {% endblock %}
 
 
 {% block main %}
 <div class="container">
+
 <!--This loops through the flash message -->
     {% for message in get_flashed_messages() %}
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -13,14 +14,12 @@
         </div>
     {% endfor %}
 
-    {% if email %}
-        <h1>Email : {{email}} </h1> 
-        <h1>Password : {{Password}} </h1> 
+  
+        <h1>Login </h1> 
 
-    {% else %}
-        <h1>What's your Email and Password?</h1> 
+        <h1>User Register </h1> 
+        <br/>
         <div class="shadow p-3 mb-5 bg-body rounded">
-            <br/>
             <form method="post">
                 {{form.hidden_tag()}} <!--This creates our csrf token -->
                 {{form.email.label(class="form-label")}}
@@ -31,10 +30,10 @@
                 {{form.submit(class="btn btn-primary")}} 
             </form>
         </div>
+    </div>
 
+   
 
-{% endif %}
-</div>
+     
+
 {% endblock %}
-
-    
