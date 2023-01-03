@@ -279,7 +279,7 @@ def add_user():
 @login_required
 def update(id):
     user = db.session.query(Users).get(id)
-    form = UpdateForm(request.form)
+    form = UpdateForm()
     if request.method == "POST" and form.validate():
         user.name = form.name.data
         user.email = form.email.data

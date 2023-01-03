@@ -1,4 +1,4 @@
-{% extends 'base_index.html' %}
+{% extends 'base_user.html' %}
 
 {% block title %} NAMES {% endblock %}
 
@@ -14,54 +14,37 @@
         </div>
     {% endfor %}
 
-    {% if name %}
-        <h1>Update User</h1> 
-          
-            <div class="container">
-                <table class="table table-bordered table-striped table-hover">
-                    <thead> 
-                        <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        </tr>
-                    </thead>
-                
-                    <tbody>
-    {% for our_user in our_users %} 
-                        <tr>
-                        <th scope="row">{{our_user.id}}</th>
-                        <td><a href="{{url_for('update', id=our_user.id)}}">{{our_user.name}}</a></td>
-                        <td>{{our_user.email}}</td>
-                        </tr>
-    {% endfor %}                    
-                    </tbody>     
-                            
-            
-                </table>
-            </div>   
-        
+    {% if id == current_user.id %}
+    <h1>User List </h1> 
+    <br/>
+    <div class="shadow p-3 mb-5 bg-body rounded">
+        <form action="/update/{{user.id}}" method="post">
+            {{form.hidden_tag()}} <!--This creates our csrf token -->
+            {{form.name.label(class="form-label")}}
+            {{form.name(class="form-control",value=user.name)}}
+            {{form.email.label(class="form-label")}}
+            {{form.email(class="form-control",value=user.email)}}
+            {{form.password_hash.label(class="form-label")}}
+            {{form.password_hash(class="form-control")}}
+            {{form.password_hash_v.label(class="form-label")}}
+            {{form.password_hash_v(class="form-control")}}
+            <br/>
+            <br/>
+            {{form.submit(class="btn btn-primary")}} 
+        </form>
+    </div>
+           
 
     {% else %}
-        <h1>User List </h1> 
-        <br/>
-        <div class="shadow p-3 mb-5 bg-body rounded">
-            <form action="/update/{{user.id}}" method="post">
-                {{form.hidden_tag()}} <!--This creates our csrf token -->
-                {{form.name.label(class="form-label")}}
-                {{form.name(class="form-control",value=user.name)}}
-                {{form.email.label(class="form-label")}}
-                {{form.email(class="form-control",value=user.email)}}
-                {{form.password_hash.label(class="form-label")}}
-                {{form.password_hash(class="form-control")}}
-                {{form.password_hash_v.label(class="form-label")}}
-                {{form.password_hash_v(class="form-control")}}
-                <br/>
-                <br/>
-                {{form.submit(class="btn btn-primary")}} 
-            </form>
-        </div>
+
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            ,<h2>Access Denied!</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    {% endfor %}
+        
+    
 
     {% endif %}
 
