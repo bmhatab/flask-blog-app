@@ -184,13 +184,31 @@ def add_post():
 @app.route('/posts')
 def posts():
     posts = Posts.query.order_by(Posts.date_posted)
-
     return render_template("posts.html",posts=posts)
 
 @app.route('/post/<int:id>')
 def post(id):
     post = Posts.query.get_or_404(id)
     return render_template('post.html', post=post)
+
+
+@app.route('/post/delete/<int:id>')
+def delete_post(id):
+    post_to_delete = Posts.query.get_or_404(id)
+    try:
+        db.session.delete(post_to_delete)
+        db.session.commit()
+        flash("Blog post was deleted")
+        posts = Posts.query.order_by(Posts.date_posted)
+        return render_template("posts.html",posts=posts)
+
+    
+    
+    except:
+        flash("There was a problem deleting post..try again")
+        posts = Posts.query.order_by(Posts.date_posted)
+        return render_template("posts.html",posts=posts)
+
 
 @app.route('/post/edit/<int:id>', methods = ["GET","POST"])
 def edit_post(id):
