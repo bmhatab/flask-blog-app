@@ -26,7 +26,7 @@
             <div class="card-body">
               <h5 class="card-title">{{post.title}}</h5>
               <hr>
-              <p class="card-text">{{post.author}}</br>{{post.slug}}</br>{{post.content}}</p>
+              <p class="card-text"> By : {{post.poster.name}}</br>{{post.slug}}</br>{{post.content}}</p>
               <a class="btn btn-outline-secondary" href="{{url_for('post', id=post.id)}}">View Post</a>
               <a class="btn btn-outline-secondary" href="{{url_for('edit_post', id=post.id)}}">Edit Post</a>
               <a class="btn btn-outline-danger" href="{{url_for('delete_post', id=post.id)}}">Delete Post</a>

@@ -7,7 +7,7 @@ from datetime import datetime
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash,check_password_hash
 from wtforms.widgets import TextArea
-from flask_login import UserMixin,login_user,LoginManager,login_required,logout_user
+from flask_login import UserMixin,login_user,LoginManager,login_required,logout_user,current_user
 
 
 #----------------------------------------------------------------------------------------------------
@@ -43,6 +43,7 @@ class Users(db.Model,UserMixin):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     # password work stuff
     password_hash = db.Column(db.String(128))
+    posts = db.relationship('Posts', backref='poster') #name to use for referencing
 
     @property
     def password(self):
@@ -73,9 +74,10 @@ class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     content = db.Column(db.Text)
-    author = db.Column(db.String(255))
+    #author = db.Column(db.String(255))
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     slug = db.Column(db.String(255)) # An alias for the url
+    poster_id = db.Column(db.Integer, db.ForeignKey('users.id')) 
 
 #----------------------------------------------------------------------------------------------------
 class NamerForm(FlaskForm):
@@ -98,7 +100,7 @@ class UserForm(FlaskForm):
 class PostForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     content = StringField("Content", validators=[DataRequired()], widget=TextArea())
-    author = StringField("Author", validators=[DataRequired()])
+    author = StringField("Author")
     slug = StringField("Slug", validators=[DataRequired()])
     submit = SubmitField()
 
@@ -168,26 +170,26 @@ def logout():
 def add_post():
     post = None
     content = None
-    author = None
     slug = None
     form = PostForm()
     if form.validate_on_submit():
+        poster = current_user.id
         post = Posts(title=form.title.data,
         content = form.content.data,
-        author = form.author.data,
+        poster_id = poster,
         slug = form.slug.data,
         )
         form.title.data = ''
         form.content.data = ''
-        form.author.data = ''
+       # form.author.data = ''
         form.slug.data = ''
 # Add Log post to database 
         db.session.add(post)
         db.session.commit()
         flash("Blog Post Submitted Sucessfully")
-        return render_template("add_post.html",form=form,post=post,content=content,author=author,slug=slug)
+        return render_template("add_post.html",form=form,post=post,content=content,slug=slug)
     else:
-        return render_template("add_post.html",form=form,post=post,content=content,author=author,slug=slug)
+        return render_template("add_post.html",form=form,post=post,content=content,slug=slug)
         
    
 @app.route('/posts')
@@ -229,7 +231,7 @@ def edit_post(id):
     form = PostForm()
     if form.validate_on_submit():
         post.title = form.title.data
-        post.author = form.author.data
+       # post.author = form.author.data
         post.slug = form.slug.data
         post.content = form.content.data
         db.session.add(post)
@@ -237,7 +239,7 @@ def edit_post(id):
         flash("Post has been updated!")
         return redirect(url_for('post',id=post.id))
     form.title.data = post.title
-    form.author.data = post.author
+   # form.author.data = post.author
     form.slug.data = post.slug
     form.content.data = post.content
     return render_template('edit_post.html', form=form)
@@ -246,8 +248,7 @@ def edit_post(id):
 
 
 @app.route('/user/add', methods =['GET','POST'])
-def add_user():
-    
+def add_user(): 
     name = None
     form = UserForm()
     if form.validate_on_submit():
