@@ -94,12 +94,6 @@ class UserForm(FlaskForm):
     password_hash = PasswordField("Password : ", validators=[DataRequired(),EqualTo('password_hash_v',message="Passwords must match!")])
     password_hash_v = PasswordField("Confirm Password : ", validators=[DataRequired()])
 
-class UpdateForm(FlaskForm):
-    name = StringField("Name : ", validators=[DataRequired()])
-    email = StringField("Email : ", validators=[DataRequired()])
-    submit = SubmitField("Submit")
-    password_hash = PasswordField("Password : ", validators=[DataRequired(),EqualTo('password_hash_v',message="Passwords must match!")])
-    password_hash_v = PasswordField("Confirm Password : ", validators=[DataRequired()])
     
 class PostForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
@@ -252,7 +246,6 @@ def edit_post(id):
 
 
 @app.route('/user/add', methods =['GET','POST'])
-@login_required
 def add_user():
     
     name = None
@@ -278,25 +271,32 @@ def add_user():
 @app.route('/update/<int:id>', methods =['GET','POST'])
 @login_required
 def update(id):
-    user = db.session.query(Users).get(id)
-    form = UpdateForm()
-    if request.method == "POST" and form.validate():
-        user.name = form.name.data
-        user.email = form.email.data
-        user.password_hash=form.password_hash.data
-        db.session.commit()
+    name_to_update = Users.query.get_or_404(id)
+    form = UserForm()
+    form.name.data = name_to_update.name
+    form.email.data = name_to_update.email
+    if form.validate_on_submit():
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user:
+            # Hash password first
+            hash_pw = generate_password_hash(form.password_hash.data, "sha256")
+            user = Users(name=form.name.data,email=form.email.data,password_hash=hash_pw)
+            db.session.add(user)
+            db.session.commit()
+        form.name.data = ''
+        form.email.data = ''
+        form.password_hash.data = ''
         flash("User Added Sucessfully")
-        return render_template("update.html",form=form,user=user)
-    
-    else:
-        return render_template("update.html",form=form,user=user)
+    #To display user names on the page 
+    our_users = Users.query.order_by(Users.date_added)   
+    return render_template('update.html',form=form,our_users=our_users,name_to_update=name_to_update)
 
 
 @app.route('/delete/<int:id>', methods =['GET','POST'])
 @login_required
 def delete(id):
     user = db.session.query(Users).get(id)
-    form = UpdateForm(request.form)
+    form = UserForm(request.form)
     if request.method == "GET":
         db.session.delete(user)
         db.session.commit()

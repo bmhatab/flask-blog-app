@@ -23,7 +23,9 @@
     <strong>Name: </strong>{{current_user.name}}</br>
     <strong>User ID: </strong>{{current_user.id}}</br>
     <strong>Email: </strong>{{current_user.email}}</br>
-    <strong>Date Joined: </strong>{{current_user.date_added}}</br>
+    <strong>Date Joined: </strong>{{current_user.date_added}}</br></br>
+
+    <a class="btn btn-outline-secondary" href="{{url_for('update',id =current_user.id)}}">Edit Profile</a>
    
     
 

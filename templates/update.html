@@ -1,6 +1,6 @@
 {% extends 'base_user.html' %}
 
-{% block title %} NAMES {% endblock %}
+{% block title %} Update User {% endblock %}
 
 
 {% block main %}
@@ -14,51 +14,33 @@
         </div>
     {% endfor %}
 
-    {% if id == current_user.id %}
-    <h1>User List </h1> 
-    <br/>
-    <div class="shadow p-3 mb-5 bg-body rounded">
-        <form action="/update/{{user.id}}" method="post">
-            {{form.hidden_tag()}} <!--This creates our csrf token -->
-            {{form.name.label(class="form-label")}}
-            {{form.name(class="form-control",value=user.name)}}
-            {{form.email.label(class="form-label")}}
-            {{form.email(class="form-control",value=user.email)}}
-            {{form.password_hash.label(class="form-label")}}
-            {{form.password_hash(class="form-control")}}
-            {{form.password_hash_v.label(class="form-label")}}
-            {{form.password_hash_v(class="form-control")}}
-            <br/>
-            <br/>
-            {{form.submit(class="btn btn-primary")}} 
-        </form>
+
+        <h1>User Update </h1> 
+       
+        <br/>
+        <div class="shadow p-3 mb-5 bg-body rounded">
+            <form method="post">
+                {{form.hidden_tag()}} <!--This creates our csrf token -->
+                {{form.name.label(class="form-label")}}
+                {{form.name(class="form-control")}}
+                {{form.email.label(class="form-label")}}
+                {{form.email(class="form-control")}}
+                {{form.password_hash.label(class="form-label")}}
+                {{form.password_hash(class="form-control")}}
+                {{form.password_hash_v.label(class="form-label")}}
+                {{form.password_hash_v(class="form-control")}}
+                <br/>
+                {{form.submit(class="btn btn-primary")}} 
+            </form>
+        </div>
     </div>
-           
 
-    {% else %}
 
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            ,<h2>Access Denied!</h2>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
         
-    
-
-    {% endif %}
-
-    </br>
-
-    
-                
         
-                
-                
-                
-            
-    
+
 </div>
- 
+
+
 
 {% endblock %}
