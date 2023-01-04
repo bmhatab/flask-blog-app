@@ -25,8 +25,10 @@
               <hr>
               <p class="card-text">{{post.poster.name}}</br>{{post.slug}}</br>{{post.content}}</p>
               <a href="{{url_for('posts')}}" class="btn btn-primary">Back to Blog</a>
+              {% if post.poster_id == current_user.id %}
               <a class="btn btn-outline-secondary" href="{{url_for('edit_post', id=post.id)}}">Edit Post</a>
               <a class="btn btn-outline-danger" href="{{url_for('delete_post', id=post.id)}}">Delete Post</a>
+              {% endif %}
             </div>
             <div class="card-footer text-muted">
                 {{post.date_posted}}

@@ -209,19 +209,27 @@ def post(id):
 @login_required
 def delete_post(id):
     post_to_delete = Posts.query.get_or_404(id)
-    try:
-        db.session.delete(post_to_delete)
-        db.session.commit()
-        flash("Blog post was deleted")
-        posts = Posts.query.order_by(Posts.date_posted)
-        return render_template("posts.html",posts=posts)
+    id = current_user.id
+    if id == post_to_delete.poster.id:
+        try:
+            db.session.delete(post_to_delete)
+            db.session.commit()
+            flash("Blog post was deleted")
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template("posts.html",posts=posts)
 
-    
-    
-    except:
-        flash("There was a problem deleting post..try again")
-        posts = Posts.query.order_by(Posts.date_posted)
-        return render_template("posts.html",posts=posts)
+        
+        
+        except:
+            flash("There was a problem deleting post..try again")
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template("posts.html",posts=posts)
+
+    else:
+         flash("Unauthorized Access")
+         posts = Posts.query.order_by(Posts.date_posted)
+         return render_template("posts.html",posts=posts)
+
 
 
 @app.route('/post/edit/<int:id>', methods = ["GET","POST"])
@@ -238,11 +246,18 @@ def edit_post(id):
         db.session.commit()
         flash("Post has been updated!")
         return redirect(url_for('post',id=post.id))
-    form.title.data = post.title
-   # form.author.data = post.author
-    form.slug.data = post.slug
-    form.content.data = post.content
-    return render_template('edit_post.html', form=form)
+    
+    if current_user.id == post.poster_id:
+        form.title.data = post.title
+    # form.author.data = post.author
+        form.slug.data = post.slug
+        form.content.data = post.content
+        return render_template('edit_post.html', form=form)
+
+    else:
+        flash("Unauthorized Access")
+        posts = Posts.query.order_by(Posts.date_posted)
+        return render_template("posts.html",posts=posts)
 
 
 
