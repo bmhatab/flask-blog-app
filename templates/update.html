@@ -4,6 +4,9 @@
 
 
 {% block main %}
+
+
+{% if name_to_update.id == current_user.id %}
 <div class="container">
 
 <!--This loops through the flash message -->
@@ -41,6 +44,6 @@
 
 </div>
 
-
+{% endif %}
 
 {% endblock %}
